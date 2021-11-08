@@ -51,6 +51,10 @@ public class QueryStatement {
 		 else if(requete == "selectionner") {
 			 return "Select * FROM eleve;";
 		 }
+		 else if(requete == "altérer") {
+			 return "UPDATE eleve SET moyenne = " + eleveConcerne.moyenne +" WHERE ID = " + eleveConcerne.ID+
+					 ";";
+		 }
 		 return "";
 	 }
 }

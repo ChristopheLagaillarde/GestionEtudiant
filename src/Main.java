@@ -65,6 +65,10 @@ public class Main {
 	JRadioButton choixFemme = null;
 	String sexe = null;
 	String menuActuel = "";
+	JLabel IDEcrit = null;
+	JLabel moyenneEcrit = null;
+
+
 	
 	Student unEtudiant;                                              // Voir documentation
 	QueryStatement requeteSQL = new QueryStatement(unEtudiant,"");   // et fichier java pour plus de d'info
@@ -72,7 +76,7 @@ public class Main {
 
 	private void initialize() {
 		fenetreGestionEtudiant = new JFrame();
-		fenetreGestionEtudiant.setBounds(100, 100, 510, 300);
+		fenetreGestionEtudiant.setBounds(100, 100, 510, 350);
 		fenetreGestionEtudiant.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetreGestionEtudiant.getContentPane().setLayout(null);
 		
@@ -80,10 +84,12 @@ public class Main {
 		JPanel menuListeEleve;
 		JPanel menuAjouterEleve;
 		JPanel menuSupprimerEleve;
+		JPanel menuAltererMoyenne;
 		
 		JButton boutonVoir;
 		JButton boutonSupprimer;
 		JButton boutonAjouter;
+		JButton boutonAlterer;
 		JButton boutonRetour ;
 		JButton boutonValider;
 		ButtonGroup choixSexe;
@@ -96,8 +102,6 @@ public class Main {
 		JLabel DOBEcrit;
 		JLabel sexeEcrit;
 		JLabel classeEcrit;
-		JLabel moyenneEcrit;
-		JLabel IDEcrit;
 		
 		Object[]  titre = {"nom","prenom","sexe","dob","classe","moyenne","ID"};
 		DefaultTableModel tableau = new DefaultTableModel();
@@ -108,7 +112,7 @@ public class Main {
 		tableau.setColumnIdentifiers(titre);
 		
 		menuPrincipal = new JPanel();
-		menuPrincipal.setBounds(10, 11, 414, 239);
+		menuPrincipal.setBounds(10, 11, 414, 289);
 		fenetreGestionEtudiant.getContentPane().add(menuPrincipal);
 		menuPrincipal.setLayout(null);
 		
@@ -129,6 +133,12 @@ public class Main {
 		menuSupprimerEleve.setBounds(10, 11, 414, 239);
 		menuSupprimerEleve.setLayout(null);
 		fenetreGestionEtudiant.getContentPane().add(menuSupprimerEleve);
+		menuSupprimerEleve.setVisible(false);
+		
+		menuAltererMoyenne = new JPanel();
+		menuAltererMoyenne.setBounds(10, 11, 414, 239);
+		menuAltererMoyenne.setLayout(null);
+		fenetreGestionEtudiant.getContentPane().add(menuAltererMoyenne);
 		menuSupprimerEleve.setVisible(false);
 		
 		boutonValider = new JButton("Valider");
@@ -164,6 +174,19 @@ public class Main {
 
 					}
 				}
+				if(menuActuel=="Altérer moyenne") {
+					try {	
+						unEtudiant.ID = Integer.parseInt(barreID.getText());
+						unEtudiant.moyenne = barreMoyenne.getText();
+						connectionBDEtudiant.requeteAFaire.executeUpdate(requeteSQL.getQueryStatement(unEtudiant, "altérer"));
+						JOptionPane.showMessageDialog(null, " Moyenne Altéré !");
+
+					}catch(SQLException erreurDeRequete) {
+						JOptionPane.showMessageDialog(null, "Erreur de saisie");
+						erreurDeRequete.printStackTrace();
+
+					}
+				}
 			}
 		});
 		boutonValider.setBounds(240, 72, 146, 42);
@@ -171,10 +194,12 @@ public class Main {
 		boutonRetour = new JButton("Retour");
 		boutonRetour.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent clique) {
+				fenetreGestionEtudiant.setBounds(100, 100, 510, 350);
 				menuPrincipal.setVisible(true);
 				menuListeEleve.setVisible(false);
 				menuAjouterEleve.setVisible(false);
 				menuSupprimerEleve.setVisible(false);
+				menuAltererMoyenne.setVisible(false);
 				boutonValider.setVisible(false);
 				boutonRetour.setVisible(false);
 
@@ -221,17 +246,45 @@ public class Main {
 				menuActuel = "Supprimer élève";
 				menuPrincipal.setVisible(false);
 				menuSupprimerEleve.setVisible(true);
+				menuSupprimerEleve.add(IDEcrit);
+				menuSupprimerEleve.add(barreID);
 				menuSupprimerEleve.add(boutonValider);
 				boutonValider.setVisible(true);
 				boutonRetour.setVisible(true);
 				menuSupprimerEleve.add(boutonRetour);
 				boutonRetour.setBounds(240, 0, 146, 42);
 				boutonValider.setVisible(true);
+				fenetreGestionEtudiant.setBounds(100, 100, 510, 200);
 
 			}
 		});
 		boutonSupprimer.setBounds(44, 158, 324, 58);
 		menuPrincipal.add(boutonSupprimer);
+		
+		boutonAlterer = new JButton("Altérer moyenne");
+		boutonAlterer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent clique) {
+				menuActuel = "Altérer moyenne";
+				menuPrincipal.setVisible(false);
+				moyenneEcrit.setBounds(50, 50,57, 14);
+				barreMoyenne.setBounds(108, 50,86, 20);
+				menuAltererMoyenne.add(IDEcrit);
+				menuAltererMoyenne.add(barreID);
+				menuAltererMoyenne.add(moyenneEcrit);
+				menuAltererMoyenne.add(barreMoyenne);
+				menuAltererMoyenne.setVisible(true);
+				menuAltererMoyenne.add(boutonValider);
+				boutonValider.setVisible(true);
+				boutonRetour.setVisible(true);
+				menuAltererMoyenne.add(boutonRetour);
+				boutonRetour.setBounds(240, 0, 146, 42);
+				boutonValider.setVisible(true);
+				fenetreGestionEtudiant.setBounds(100, 100, 510, 200);
+
+			}
+		});
+		boutonAlterer.setBounds(44, 230, 324, 58);
+		menuPrincipal.add(boutonAlterer);
 		
 		boutonAjouter = new JButton("Ajouter à la liste");
 		boutonAjouter.addActionListener(new ActionListener() {
@@ -241,9 +294,17 @@ public class Main {
 				menuAjouterEleve.setVisible(true);
 				menuAjouterEleve.add(boutonRetour);
 				menuAjouterEleve.add(boutonValider);
+				menuAjouterEleve.add(moyenneEcrit);
+				menuAjouterEleve.add(barreMoyenne);
+				moyenneEcrit.setVisible(true);
+				barreMoyenne.setVisible(true);
 				boutonRetour.setBounds(240, 0, 146, 42);
+				moyenneEcrit.setBounds(40, 190, 57, 14);
+				barreMoyenne.setBounds(96, 187, 86, 20);
 				boutonValider.setVisible(true);
 				boutonRetour.setVisible(true);
+				fenetreGestionEtudiant.setBounds(100, 100, 510, 280);
+
 			}
 		});
 		boutonAjouter.setBounds(44, 11, 324, 66);
